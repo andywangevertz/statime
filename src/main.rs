@@ -76,6 +76,7 @@ fn main() {
     };
     let clock_id = ClockIdentity(get_clock_id().expect("Could not get clock identity"));
 
+    log::info!("clock_id: {:?} domain: {:?}", clock_id, args.domain);
     let config = Config {
         identity: clock_id,
         sdo: args.sdo,

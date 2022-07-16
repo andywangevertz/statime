@@ -330,7 +330,8 @@ impl<'a> NetworkRuntime for LinuxRuntime {
                 IpMembershipRequest::new(LinuxRuntime::IPV4_PRIMARY_MULTICAST, interface_idx);
             setsockopt(socket, IpAddMembership, &multicast_req)
                 .map_err(|_| NetworkError::UnknownError)?;
-
+	//Andy
+           log::info!( "set multicast req:{} idx: {:?}", LinuxRuntime::IPV4_PRIMARY_MULTICAST, interface_idx); 
             let multicast_req =
                 IpMembershipRequest::new(LinuxRuntime::IPV4_PDELAY_MULTICAST, interface_idx);
             setsockopt(socket, IpAddMembership, &multicast_req)

@@ -64,7 +64,11 @@ impl<NR: NetworkRuntime, C: Clock, F: Filter> PtpInstance<NR, C, F> {
     /// This should be called for any and all packets that were received on the opened sockets of the network runtime.
     pub fn handle_network(&mut self, packet: NetworkPacket) {
         self.port.handle_network(packet, self.bmca_watch.now());
+
+	//let (d, t) = if let Some((d, t)) = self.port.extract_measurement() { (d, t) } else { log::info!("self.port.extract_measurement => None"); (None, None) };
         if let Some((data, time_properties)) = self.port.extract_measurement() {
+		//log::info!(" time_p {:?}", time_properties);
+		// time_p ArbitraryTime { time_traceable: false, frequency_traceable: false }
             let (offset, freq_corr) = self.filter.absorb(data);
             self.clock
                 .adjust(offset, freq_corr, time_properties)

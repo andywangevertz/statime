@@ -257,8 +257,14 @@ impl StateSlave {
     }
 
     fn extract_measurement(&mut self) -> Option<Measurement> {
+	//log::info!("extract_measurement {:?} {:?} {:?} {:?} ", 
+	//	self.sync_recv_time, self.sync_send_time, self.mean_delay, self.sync_recv_time);
+	// extract_measurement Some(Instant { inner: 1657988391826148406 }) Some(Instant { inner: 1657988391826153863 }) None Some(Instant { inner: 1657988391826148406 })
+
+	// need to delete mean_delay as our current config has no delay message sending back ??
         let result = Measurement {
-            master_offset: self.sync_recv_time? - self.sync_send_time? - self.mean_delay?,
+            //master_offset: self.sync_recv_time? - self.sync_send_time? - self.mean_delay?,
+            master_offset: self.sync_recv_time? - self.sync_send_time? ,
             event_time: self.sync_recv_time?,
         };
 
@@ -358,6 +364,9 @@ impl<NR: NetworkRuntime> Port<NR> {
 
     fn process_message(&mut self, packet: NetworkPacket, current_time: Instant) -> Option<()> {
         let message = Message::deserialize(&packet.data).ok()?;
+	//log::info!("process_message: sdo_id {:?} == {:?}", message.header().sdo_id(), self.portdata.sdo);
+	//log::info!("process_message: domain {:?} == {:?}, time {:?}", 
+	//	message.header().domain_number(), self.portdata.domain, current_time);
         if message.header().sdo_id() != self.portdata.sdo
             || message.header().domain_number() != self.portdata.domain
         {
@@ -380,6 +389,7 @@ impl<NR: NetworkRuntime> Port<NR> {
     }
 
     pub fn extract_measurement(&mut self) -> Option<(Measurement, TimeProperties)> {
+	//log::info!("extract_measurement {:?}", State::Slave(self.state));
         match &mut self.state {
             State::Slave(state) => state
                 .extract_measurement()

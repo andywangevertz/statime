@@ -39,8 +39,11 @@ impl Filter for BasicFilter {
             log::debug!("Offset too large, stepping {}", measurement.master_offset);
             self.offset_confidence = Duration::from_nanos(1_000_000_000);
             self.freq_confidence = 1e-4;
+	    log::info!("Filter.absorb too large {:?}", measurement.master_offset);
             return (-measurement.master_offset, 1.0);
         }
+	//log::info!("Filter.absorb {:?}", measurement.master_offset);
+	// Filter.absorb Duration { inner: -5457 }
 
         // Determine offset
         let mut offset = measurement.master_offset;
